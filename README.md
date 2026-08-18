@@ -200,7 +200,7 @@ The IoT interface provides access to selected electrical measurements, load clas
 ## My Role
 
 - Developed the ESP32 firmware for real-time voltage and current data acquisition.
-- Developed the Python application for signal processing and real-time visualization.
+- Developed Python scripts for signal processing, data visualization.
 - Implemented electrical feature extraction, including RMS Voltage, RMS Current, Power Factor, THD, and Crest Factor.
 - Trained the Random Forest classifier using hardware measurement data.
 
