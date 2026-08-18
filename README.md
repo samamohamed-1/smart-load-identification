@@ -33,8 +33,6 @@ Smart-Load-Identification/
 │   ├── Loads_Dataset_Hardware.csv
 │   └── Loads_Dataset_Software.csv
 │
-├── Matlab-Simulation/
-│
 ├── Sensor-Simulation/
 │   ├── Proteus/
 │   │   ├── Voltage_Sensor.pdsprj
@@ -48,7 +46,7 @@ Smart-Load-Identification/
 │   └── smart-load-id.ino
 │
 ├── Images/
-│   ├── Matlab-Results/
+│   ├── Matlab-Simulation/
 │   ├── Hardware_setup/
 │   ├── Real-Time-Results/
 │   └── IoT/
