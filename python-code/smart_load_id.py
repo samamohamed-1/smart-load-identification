@@ -27,11 +27,11 @@ VI_SMOOTH_WINDOW = 20
 # =========================
 # BLYNK & TELEGRAM CONFIG
 # =========================
-BLYNK_TOKEN = "vmsGlfT_hQP_xMYOEUVnysuo2gb0BWu0"
+BLYNK_TOKEN = ""   #priv  ---use your own tocken
 BLYNK_BASE = "https://blynk.cloud/external/api/update"
 
-BOT_TOKEN = "8610870872:AAHh26IvLOCiAvVlmBFRrmyTM8wBXwhTEQI"
-CHAT_ID = "1096033324"
+BOT_TOKEN = ""     #priv ---use your own tocken
+CHAT_ID = ""       #---use your own chat IDs
 
 # =========================
 # ENERGY CONFIG
@@ -104,15 +104,7 @@ def filter_signal(signal, filter_type=FILTER_TYPE):
         return moving_average_filter(signal, MOVING_AVG_WINDOW)
     else:
         raise ValueError(f"Unknown filter type: {filter_type}")
-
-
-# =========================
-# PHASE COMPENSATION
-# =========================
-def apply_phase_calibration(signal, integer_shift=0):
-    return np.roll(signal, integer_shift)
-
-
+ 
 # =========================
 # METRICS CALCULATION
 # =========================
@@ -258,11 +250,14 @@ def main():
                 model = joblib.load('load_classifier.pkl')
                 ml_prediction = model.predict([[v_rms, i_rms, pf, thd, cf]])
                 detected = ml_prediction[0]
+
             except FileNotFoundError:
-                detected = "motor2"
+                detected = "Unknown"
+                print("Error: load_classifier.pkl not found.")
+
             except Exception as e:
-                detected = "motor2"
-                print(f"Error loading ML model: {e}")
+                detected = "Unknown"
+                print(f"Error loading ML model: {e}")    
 
             # --- 5. Energy & Cost Calculation ---
             active_power = v_rms * i_rms * pf
@@ -286,19 +281,9 @@ def main():
             send_telegram(active_power, v_rms, i_rms, detected, cumulative_energy, cumulative_energy * PRICE_PER_KWH,
                           pf, thd, cf)
 
-            # --- 7. SMART LOGIC FOR PLOTTING ---
-            if detected == "motor2":
-                dynamic_lag = -6
-                visual_window = 25
-                do_sort = False
-                print("[Smart Visual] Motor detected: Applying -6 shift for Ellipse.")
-            else:
-                dynamic_lag = 0
-                visual_window = 5
-                do_sort = True
-                print("[Smart Visual] Linear/Non-linear detected: No shift, applied sorting.")
-
-            i_calibrated = apply_phase_calibration(i_filt, integer_shift=dynamic_lag)
+            # --- 7. Visualization Processing ---
+            visual_window = 5
+            do_sort = True   
 
             # --- 8. Plotting (Update the existing window) ---
             axes[0].clear()
@@ -310,7 +295,7 @@ def main():
             samples = min(350, len(v_filt))
             t = np.arange(samples)
             vf_plot = v_filt[:samples]
-            ic_plot = i_calibrated[:samples]
+            ic_plot = i_filt[:samples]
 
             # Plot 1
             axes[0].plot(t, vf_plot, label="Voltage", linewidth=1.5)
